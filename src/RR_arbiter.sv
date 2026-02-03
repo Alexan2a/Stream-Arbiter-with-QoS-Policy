@@ -24,12 +24,12 @@ module RR_arbiter#(
   );
 
   simple_priority_arbiter #(STREAM_COUNT) i_unmasked_sp(
-    .req  (unmasked_req  ),
+    .req  (req           ),
     .grant(unmasked_grant)
   );
 
   always_ff @(posedge clk or negedge nrst)
-    if (~nrst) ptr_r <= 1;
+    if (~nrst)          ptr_r <= 2 ** (STREAM_COUNT-1);
     else if (en & |req) ptr_r <= grant;
 
 endmodule
