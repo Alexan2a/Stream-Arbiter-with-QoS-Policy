@@ -21,23 +21,26 @@ module stream_arbiter #(
   input  logic m_ready_i
 );
 
-  logic [STREAM_COUNT-1:0] grant_onehot;
+  logic [STREAM_COUNT-1:0] grant_onehot, grant_onehot_d;
   logic [T_ID___WIDTH-1:0] id;
   logic [T_DATA_WIDTH-1:0] data;
   logic [T_QOS__WIDTH-1:0] qos;
-  logic last;
+  logic valid, last, last_d, en;
+  logic valid_d;
+  logic valid_negedge;
   
+  //assign failure =  & ~last_d;
+  assign en = last & m_ready_i | (~last_d & valid_negedge); 
   
   RR_priority_arbiter #(STREAM_COUNT, T_QOS__WIDTH) i_rr_pr(
     .clk  (clk         ),
     .nrst (rst_n       ),
-    .en   (last        ),
+    .en   (en          ),
     .req  (s_valid_i   ),
     .qos  (s_qos_i     ),
     .grant(grant_onehot)
   );
-
-
+  
   always_comb begin
     id = 0;
     for (int i = 0; i < STREAM_COUNT; i++) begin
@@ -46,24 +49,37 @@ module stream_arbiter #(
   end
 
   always_comb begin
-    data = 0;
-    qos  = 0;
-    last = 0;
+    data =  0;
+    qos  =  0;
+    last =  0;
+    valid = 0;
     for (int i = 0; i < STREAM_COUNT; i++) begin
       if (id == i) begin
-        data = s_data_i[i];
-        qos  = s_qos_i [i];
-        last = s_last_i[i];
+        data =  s_data_i[i];
+        qos  =  s_qos_i [i];
+        last =  s_last_i[i];
+        valid = s_valid_i[i];
       end
     end
   end
+ 
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      valid_d <= 1'b0;
+      last_d  <= 1'b0;
+    end else begin
+      valid_d <= valid;   
+      last_d  <= last;   
+    end
+  end
+  
+  assign valid_negedge = valid_d & !valid;
+  assign m_id_o    = id;
+  assign m_data_o  = data;
+  assign m_qos_o   = qos;
+  assign m_last_o  = last;
+  assign m_valid_o = valid;
 
-  assign m_id_o   = id;
-  assign m_data_o = data;
-  assign m_qos_o  = qos;
-  assign m_last_o = last;
-
-  assign m_valid_o = |s_valid_i;
   assign s_ready_o = (~m_ready_i) ? {STREAM_COUNT{1'b0}} :
                      (|s_valid_i) ? grant_onehot : 
                                     {STREAM_COUNT{1'b1}};
