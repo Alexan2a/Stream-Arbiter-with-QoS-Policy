@@ -50,6 +50,7 @@ module stream_arbiter #(
   output logic                          m_valid_o,
   input  logic                          m_ready_i
 );
+```
 
 # Запуск тестов в ModelSim
 
@@ -71,7 +72,7 @@ vsim -c work.testbench \
           vlog stream_arbiter.sv interface.sv; \
           vsim work.testbench; \
           run -all"
-
+```
 ### FILE‑генерация + FILE‑проверка
 ```bash
 vsim -c work.testbench \
@@ -79,3 +80,4 @@ vsim -c work.testbench \
           vlog stream_arbiter.sv interface.sv; \
           vsim work.testbench; \
           run -all"
+```
