@@ -1,11 +1,11 @@
 module testbench;
   
   `ifndef GEN_MOD
-    `define GEN_MOD "RANDOM"
+    `define GEN_MOD "FILE"
   `endif
 
   `ifndef CHECK_MOD
-    `define CHECK_MOD "AUTO"
+    `define CHECK_MOD "FILE"
   `endif
 
   // params
@@ -23,11 +23,11 @@ module testbench;
   int last_grant_id = -1;
   
   typedef enum logic [2:0] {
-    ST_IDLE      = 3'd0,  // idle
-    ST_START     = 3'd1,  // start
-    ST_TX_ON     = 3'd2,  // Transaction on
-    ST_LAST      = 3'd3,  // last
-    ST_FAIL      = 3'd4   // fail
+    ST_IDLE      = 3'd0,
+    ST_START     = 3'd1,
+    ST_TX_ON     = 3'd2,
+    ST_LAST      = 3'd3,
+    ST_FAIL      = 3'd4
   } state_t;
   state_t state = ST_IDLE;
   
@@ -239,12 +239,13 @@ module testbench;
           $error("ERROR: expected m_last_o=%b, actual m_last_o=%b", last, vif.m_last_o);
         else if (vif.m_valid_o != valid)
           $error("ERROR: expected m_valid_o=0, actual m_qos_o=%b", valid, vif.m_valid_o);
-        else $display("hello");
+
         @(posedge vif.clk);
       end
     end
 
     $fclose(fd);
+    $finish;
   endtask
 
   task automatic monitor_output();
