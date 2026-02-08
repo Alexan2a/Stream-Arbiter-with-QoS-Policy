@@ -52,7 +52,9 @@ module stream_arbiter #(
 );
 ```
 
-# Запуск тестов в ModelSim
+---
+
+## Запуск тестов в ModelSim
 
 Testbench поддерживает два режима генерации входов и два режима проверки:
 
@@ -63,9 +65,9 @@ Testbench поддерживает два режима генерации вхо
 | **CHECK_MOD = FILE** | Проверка по эталонному файлу `check_vector.txt` |
 | **CHECK_MOD = AUTO** | Автоматическая проверка поведения |
 
-## Команды запуска
+### Команды запуска
 
-### RANDOM‑генерация + AUTO‑проверка
+#### RANDOM‑генерация + AUTO‑проверка
 ```bash
 vsim -c work.testbench \
      -do "vlog +define+GEN_MOD=RANDOM +define+CHECK_MOD=AUTO testbench.sv; \
@@ -73,7 +75,7 @@ vsim -c work.testbench \
           vsim work.testbench; \
           run -all"
 ```
-### FILE‑генерация + FILE‑проверка
+#### FILE‑генерация + FILE‑проверка
 ```bash
 vsim -c work.testbench \
      -do "vlog +define+GEN_MOD=FILE +define+CHECK_MOD=FILE testbench.sv; \
