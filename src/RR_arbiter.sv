@@ -15,10 +15,8 @@ module RR_arbiter#(
   logic [STREAM_COUNT-1:0] unmasked_grant;
   logic [STREAM_COUNT-1:0] grant_rr_d;
   logic [STREAM_COUNT-1:0] grant_rr;
-  logic grant_en;
-  logic en_d, nzero_req, nzero_req_d;
+  logic en_d, nzero_req, nzero_req_d, grant_en;
   
-  //assign fail       = ((grant_rr_d & req) == 0) & grant_rr_d != 0 & ~en_d;
   assign mask       = ~((ptr_r-1) | ptr_r);
   assign masked_req = req & mask;
   assign grant_rr   = (|masked_req) ? masked_grant : unmasked_grant;

@@ -28,8 +28,7 @@ module stream_arbiter #(
   logic valid, last, last_d, en;
   logic valid_d;
   logic valid_negedge;
-  
-  //assign failure =  & ~last_d;
+
   assign en = last & m_ready_i | (~last_d & valid_negedge); 
   
   RR_priority_arbiter #(STREAM_COUNT, T_QOS__WIDTH) i_rr_pr(
